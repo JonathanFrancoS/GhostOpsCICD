@@ -1,0 +1,68 @@
+﻿name: ghostops-cicd
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: ghostops-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Debes configurar MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ghost}
+      MYSQL_USER: ${MYSQL_USER:-ghostuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Debes configurar MYSQL_PASSWORD}
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - ghostops-network
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mysqladmin ping -h 127.0.0.1 -uroot -p"$${MYSQL_ROOT_PASSWORD}" --silent'
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  ghost:
+    image: ghost:6-alpine
+    container_name: ghostops-app
+    restart: unless-stopped
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    ports:
+      - "127.0.0.1:8080:2368"
+
+    environment:
+      NODE_ENV: production
+      url: ${GHOST_URL:-http://localhost:8080}
+      database__client: mysql
+      database__connection__host: mysql
+      database__connection__user: ${MYSQL_USER:-ghostuser}
+      database__connection__password: ${MYSQL_PASSWORD:?Debes configurar MYSQL_PASSWORD}
+      database__connection__database: ${MYSQL_DATABASE:-ghost}
+
+    volumes:
+      - ghost_content:/var/lib/ghost/content
+
+    networks:
+      - ghostops-network
+
+volumes:
+  mysql_data:
+    name: ghostops_mysql_data
+
+  ghost_content:
+    name: ghostops_ghost_content
+
+networks:
+  ghostops-network:
+    name: ghostops-network
+    driver: bridge
