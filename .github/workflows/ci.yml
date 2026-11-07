@@ -1,0 +1,44 @@
+name: Docker CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_ROOT_PASSWORD: ci-root-password
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ghostuser
+      MYSQL_PASSWORD: ci-ghost-password
+      GHOST_URL: http://localhost:8080
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+
+      - name: Build application image
+        run: docker compose build ghost
+
+      - name: Start services and wait for health checks
+        run: docker compose up --detach --wait --wait-timeout 300
+
+      - name: Verify the application responds
+        run: curl --fail --silent --show-error --retry 30 --retry-connrefused --retry-delay 5 http://localhost:8080/
+
+      - name: Verify Ghost initialized its database schema
+        run: |
+          docker compose exec --no-TTY mysql sh -c \
+            'MYSQL_PWD="$MYSQL_PASSWORD" mysql --batch --skip-column-names -u"$MYSQL_USER" "$MYSQL_DATABASE" -e "SHOW TABLES;"' \
+            | grep --fixed-strings --line-regexp posts
+
+      - name: Stop services
+        if: always()
+        run: docker compose down --volumes

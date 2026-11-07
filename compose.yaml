@@ -3,8 +3,7 @@
 services:
 
   mysql:
-    image: mysql:8.0
-    container_name: ghostops-mysql
+    image: mysql:8.0.46
     restart: unless-stopped
 
     environment:
@@ -29,8 +28,10 @@ services:
       start_period: 30s
 
   ghost:
-    image: ghost:6-alpine
-    container_name: ghostops-app
+    image: ghostops-app:1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
 
     depends_on:
@@ -54,6 +55,17 @@ services:
 
     networks:
       - ghostops-network
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://127.0.0.1:2368/', response => process.exit(response.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
 
 volumes:
   mysql_data:
