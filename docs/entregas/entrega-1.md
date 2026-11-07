@@ -34,7 +34,7 @@ Guardar las capturas legibles en `screenshot/` y reunirlas en el PDF final. El i
 3. `screenshot/03-docker-ps.png`: estado de ambos contenedores.
 4. `screenshot/04-docker-network-inspect.png`: red y contenedores conectados.
 5. `screenshot/05-comunicacion-ghost-mysql-terminal.png` y `screenshot/05b-comunicacion-publicacion-web.png`: registro consultado en MySQL y pagina servida por Ghost.
-6. La ejecucion verde del workflow Docker CI en GitHub Actions, pendiente de generar despues de subir el workflow al repositorio.
+6. `screenshot/06-github-actions-ci.png`: ejecucion verde del workflow Docker CI en GitHub Actions.
 
 Incluye en el PDF el diagrama de arquitectura del README, las conclusiones de la prueba y las referencias bibliográficas listadas al final de ese README.
 
