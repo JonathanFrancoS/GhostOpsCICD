@@ -1,65 +1,43 @@
-﻿# Entrega 1 - Infraestructura Docker
+# Entrega 1 - Infraestructura Docker y CI
 
-## 1. Objetivo
+## Objetivo
 
-Implementar una infraestructura de software basada en contenedores Docker que permita ejecutar Ghost y MySQL como servicios independientes y establecer comunicación entre ambos.
+Desplegar una aplicación web y una base de datos como servicios separados, demostrar su comunicación con persistencia y validar la construcción y ejecución con Docker Compose y GitHub Actions.
 
-## 2. Descripción de la solución
+## Arquitectura
 
-La solución utiliza Ghost como plataforma de publicación web y MySQL como sistema gestor de bases de datos relacional.
+Ghost 6.0.0 Alpine se construye desde el `Dockerfile` propio del proyecto. MySQL 8.0.46 es el segundo servicio. Ambos comparten la red bridge `ghostops-network`; Ghost se conecta al host `mysql` por el puerto interno 3306. Compose publica Ghost en el puerto 8080 del host, espera el healthcheck de MySQL y conserva los datos con los volúmenes `mysql_data` y `ghost_content`.
 
-Los servicios se administran mediante Docker Compose, que permite definir y ejecutar la infraestructura desde un único archivo de configuración.
+## Configuración y seguridad
 
-## 3. Servicios implementados
+- Las contraseñas se proporcionan desde `.env`, que está ignorado por Git y `.dockerignore`.
+- `.env.example` documenta las variables requeridas sin contener credenciales reales.
+- MySQL solo es accesible en la red privada de Compose; no se publica su puerto en el host.
+- Las imágenes usan etiquetas de versión fijada, no `latest`.
 
-### 3.1 Ghost
+## Prueba de comunicación
 
-Aplicación web responsable de gestionar y publicar contenido.
+1. Iniciar con `docker compose up --detach --wait`.
+2. Completar la configuración de Ghost desde `http://localhost:8080/ghost`.
+3. Crear y publicar desde Ghost una entrada con slug `prueba-comunicacion`.
+4. Leer la publicación desde `http://localhost:8080/prueba-comunicacion/`.
+5. Ejecutar `.\scripts\verify-communication.ps1 -Slug prueba-comunicacion` y capturar la fila consultada en MySQL y la respuesta HTTP.
 
-### 3.2 MySQL
+La entrada creada y servida por Ghost, junto con su registro en MySQL, prueba el flujo de escritura y lectura entre servicios.
 
-Servicio encargado de almacenar la información utilizada por Ghost.
+## Evidencias para el PDF
 
-## 4. Comunicación entre contenedores
+Guardar las capturas legibles en `screenshot/` y reunirlas en el PDF final. El indice contiene los nombres y pies de figura sugeridos en formato APA:
 
-Los servicios se conectan mediante una red Docker de tipo bridge denominada ghostops-network.
+1. `screenshot/01-docker-build.png`: construccion de la imagen completada correctamente.
+2. `screenshot/02-docker-compose-up.png`: servicios iniciados y saludables.
+3. `screenshot/03-docker-ps.png`: estado de ambos contenedores.
+4. `screenshot/04-docker-network-inspect.png`: red y contenedores conectados.
+5. `screenshot/05-comunicacion-ghost-mysql-terminal.png` y `screenshot/05b-comunicacion-publicacion-web.png`: registro consultado en MySQL y pagina servida por Ghost.
+6. `screenshot/06-github-actions-ci.png`: ejecucion verde del workflow Docker CI en GitHub Actions.
 
-Ghost utiliza el nombre del servicio mysql como dirección de conexión interna.
+Incluye en el PDF el diagrama de arquitectura del README, las conclusiones de la prueba y las referencias bibliográficas listadas al final de ese README.
 
-## 5. Persistencia
+## Conclusiones
 
-Se definen dos volúmenes:
-
-- ghostops_mysql_data: conserva los datos de MySQL.
-- ghostops_ghost_content: conserva el contenido de Ghost.
-
-## 6. Disponibilidad de servicios
-
-MySQL incorpora una comprobación de salud mediante healthcheck.
-
-Docker Compose utiliza esta comprobación para esperar a que la base de datos esté disponible antes de iniciar Ghost.
-
-## 7. Pruebas de validación
-
-Se realizarán las siguientes verificaciones:
-
-- Validación de la configuración Docker Compose.
-- Descarga de las imágenes.
-- Ejecución de ambos contenedores.
-- Verificación del estado de salud de MySQL.
-- Inspección de la red Docker.
-- Acceso a Ghost desde el navegador.
-- Consulta de la base de datos MySQL.
-- Comprobación de las tablas creadas por Ghost.
-
-Los resultados y capturas se incorporarán una vez ejecutadas las pruebas.
-
-## 8. Evidencias
-
-Las capturas de pantalla de esta entrega se almacenarán en docs/evidencias/entrega-1.
-
-## 9. Conclusión
-
-La implementación permite establecer una primera infraestructura basada en contenedores, separando la aplicación web de su sistema gestor de bases de datos.
-
-Esta arquitectura constituye la base para incorporar posteriormente herramientas de integración y entrega continua.
+La aplicación y la base de datos se despliegan como contenedores independientes. El DNS interno de Docker permite que Ghost use el nombre de servicio `mysql`, mientras los volúmenes conservan los datos y el healthcheck ordena el arranque. El workflow de CI valida el build, la disponibilidad de los servicios y la inicialización de la base de datos en cada push y pull request.
