@@ -1,4 +1,4 @@
-﻿pipeline {
+pipeline {
     agent any
 
     // Revisar GitHub automáticamente cada dos minutos.
