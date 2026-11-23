@@ -1,0 +1,209 @@
+Started by an SCM change
+Obtained Jenkinsfile from git https://github.com/JonathanFrancoS/GhostOpsCICD
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/GhostOpsCICD-Pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/GhostOpsCICD-Pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/JonathanFrancoS/GhostOpsCICD # timeout=10
+Fetching upstream changes from https://github.com/JonathanFrancoS/GhostOpsCICD
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/JonathanFrancoS/GhostOpsCICD +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision f50b0d989a925bf213c826a14aa9012462c94872 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f50b0d989a925bf213c826a14aa9012462c94872 # timeout=10
+Commit message: "docs: document Jenkins continuous integration"
+ > git rev-list --no-walk 89c379d743f73f3ae233297d40e9cb4a42467290 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $MYSQL_PASSWORD or $MYSQL_ROOT_PASSWORD
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] echo
+[2026-11-23T00:10:16.267Z] Descargando el codigo fuente desde GitHub.
+[Pipeline] checkout
+[2026-11-23T00:10:16.334Z] Selected Git installation does not exist. Using Default
+[2026-11-23T00:10:16.335Z] The recommended git tool is: NONE
+[2026-11-23T00:10:16.335Z] No credentials specified
+[2026-11-23T00:10:16.336Z]  > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/GhostOpsCICD-Pipeline/.git # timeout=10
+[2026-11-23T00:10:16.355Z] Fetching changes from the remote Git repository
+[2026-11-23T00:10:16.359Z]  > git config remote.origin.url https://github.com/JonathanFrancoS/GhostOpsCICD # timeout=10
+[2026-11-23T00:10:16.382Z] Fetching upstream changes from https://github.com/JonathanFrancoS/GhostOpsCICD
+[2026-11-23T00:10:16.382Z]  > git --version # timeout=10
+[2026-11-23T00:10:16.400Z]  > git --version # 'git version 2.47.3'
+[2026-11-23T00:10:16.401Z]  > git fetch --tags --force --progress -- https://github.com/JonathanFrancoS/GhostOpsCICD +refs/heads/*:refs/remotes/origin/* # timeout=10
+[2026-11-23T00:10:17.612Z]  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+[2026-11-23T00:10:17.633Z] Checking out Revision f50b0d989a925bf213c826a14aa9012462c94872 (refs/remotes/origin/main)
+[2026-11-23T00:10:17.633Z]  > git config core.sparsecheckout # timeout=10
+[2026-11-23T00:10:17.650Z]  > git checkout -f f50b0d989a925bf213c826a14aa9012462c94872 # timeout=10
+[2026-11-23T00:10:17.704Z] Commit message: "docs: document Jenkins continuous integration"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] echo
+[2026-11-23T00:10:18.085Z] Validando Docker Compose.
+[Pipeline] sh
+[2026-11-23T00:10:18.409Z] + docker compose -f compose.yaml config --quiet
+[Pipeline] echo
+[2026-11-23T00:10:19.407Z] Construyendo las imagenes de Ghost y MySQL.
+[Pipeline] sh
+[2026-11-23T00:10:19.728Z] + docker compose -f compose.yaml build mysql ghost
+[2026-11-23T00:10:19.979Z] time="2026-11-23T00:10:19Z" level=warning msg="buildx Docker CLI plugin not found: falling back to the classic builder. BuildKit-only build features (multi-arch, secrets, ssh, additional contexts, ...) will not be available"
+[2026-11-23T00:10:19.979Z]  Image ghostops-mysql:1.0.0 Building 
+[2026-11-23T00:10:19.979Z]  Image ghostops-mysql:1.0.0 Building 
+[2026-11-23T00:10:20.230Z] Sending build context to Docker daemon  367.6kB[2026-11-23T00:10:20.230Z] 
+[2026-11-23T00:10:20.230Z] Step 1/4 : FROM mysql:8.0.46
+[2026-11-23T00:10:20.230Z]  ---> 6cd09145362d
+[2026-11-23T00:10:20.230Z] Step 2/4 : LABEL maintainer="GhostOpsCICD"
+[2026-11-23T00:10:20.230Z]  ---> Using cache
+[2026-11-23T00:10:20.230Z]  ---> bedba4a5a0ca
+[2026-11-23T00:10:20.230Z] Step 3/4 : LABEL description="Imagen MySQL para el proyecto GhostOpsCICD"
+[2026-11-23T00:10:20.230Z]  ---> Using cache
+[2026-11-23T00:10:20.230Z]  ---> e94af1726ee8
+[2026-11-23T00:10:20.230Z] Step 4/4 : LABEL com.docker.compose.image.builder=classic
+[2026-11-23T00:10:20.230Z]  ---> Using cache
+[2026-11-23T00:10:20.230Z]  ---> f0330b217c5b
+[2026-11-23T00:10:20.230Z] Successfully built f0330b217c5b
+[2026-11-23T00:10:20.230Z] Successfully tagged ghostops-mysql:1.0.0
+[2026-11-23T00:10:20.230Z]  Image ghostops-mysql:1.0.0 Built 
+[2026-11-23T00:10:20.230Z]  Image ghostops-mysql:1.0.0 Built 
+[2026-11-23T00:10:20.230Z]  Image ghostops-app:1.0.0 Building 
+[2026-11-23T00:10:20.230Z]  Image ghostops-app:1.0.0 Building 
+[2026-11-23T00:10:20.230Z] Sending build context to Docker daemon  367.6kB[2026-11-23T00:10:20.230Z] 
+[2026-11-23T00:10:20.230Z] Step 1/5 : FROM ghost:6.0.0-alpine
+[2026-11-23T00:10:20.482Z]  ---> 637c68c88ae0
+[2026-11-23T00:10:20.482Z] Step 2/5 : WORKDIR /var/lib/ghost
+[2026-11-23T00:10:20.482Z]  ---> Using cache
+[2026-11-23T00:10:20.482Z]  ---> bebbb9b72f49
+[2026-11-23T00:10:20.482Z] Step 3/5 : EXPOSE 2368
+[2026-11-23T00:10:20.482Z]  ---> Using cache
+[2026-11-23T00:10:20.482Z]  ---> acc7d1caf256
+[2026-11-23T00:10:20.482Z] Step 4/5 : CMD ["node", "current/index.js"]
+[2026-11-23T00:10:20.482Z]  ---> Using cache
+[2026-11-23T00:10:20.482Z]  ---> 341344e1af5a
+[2026-11-23T00:10:20.482Z] Step 5/5 : LABEL com.docker.compose.image.builder=classic
+[2026-11-23T00:10:20.482Z]  ---> Using cache
+[2026-11-23T00:10:20.482Z]  ---> fc92cc643695
+[2026-11-23T00:10:20.482Z] Successfully built fc92cc643695
+[2026-11-23T00:10:20.482Z] Successfully tagged ghostops-app:1.0.0
+[2026-11-23T00:10:20.482Z]  Image ghostops-app:1.0.0 Built 
+[2026-11-23T00:10:20.482Z]  Image ghostops-app:1.0.0 Built 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Test)
+[Pipeline] echo
+[2026-11-23T00:10:20.895Z] Iniciando los servicios para las pruebas.
+[Pipeline] sh
+[2026-11-23T00:10:21.220Z] + docker compose -f compose.yaml up -d --wait --wait-timeout 300
+[2026-11-23T00:10:21.471Z]  Network ghostops-network Creating 
+[2026-11-23T00:10:21.471Z]  Volume ghostops_mysql_data Creating 
+[2026-11-23T00:10:21.471Z]  Volume ghostops_ghost_content Creating 
+[2026-11-23T00:10:21.471Z]  Volume ghostops_mysql_data Created 
+[2026-11-23T00:10:21.471Z]  Volume ghostops_ghost_content Created 
+[2026-11-23T00:10:21.471Z]  Network ghostops-network Created 
+[2026-11-23T00:10:21.471Z]  Container ghostops-ci-3-mysql-1 Creating 
+[2026-11-23T00:10:21.722Z]  Container ghostops-ci-3-mysql-1 Created 
+[2026-11-23T00:10:21.722Z]  Container ghostops-ci-3-ghost-1 Creating 
+[2026-11-23T00:10:21.973Z]  Container ghostops-ci-3-ghost-1 Created 
+[2026-11-23T00:10:21.973Z]  Container ghostops-ci-3-mysql-1 Starting 
+[2026-11-23T00:10:22.525Z]  Container ghostops-ci-3-mysql-1 Started 
+[2026-11-23T00:10:22.525Z]  Container ghostops-ci-3-mysql-1 Waiting 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-mysql-1 Healthy 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-ghost-1 Starting 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-ghost-1 Started 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-ghost-1 Waiting 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-mysql-1 Waiting 
+[2026-11-23T00:11:09.033Z]  Container ghostops-ci-3-mysql-1 Healthy 
+[2026-11-23T00:12:05.086Z]  Container ghostops-ci-3-ghost-1 Healthy 
+[Pipeline] echo
+[2026-11-23T00:12:05.212Z] Verificando el estado de los servicios.
+[Pipeline] sh
+[2026-11-23T00:12:05.561Z] + docker compose -f compose.yaml ps
+[2026-11-23T00:12:05.813Z] NAME                    IMAGE                  COMMAND                  SERVICE   CREATED              STATUS                        PORTS
+[2026-11-23T00:12:05.813Z] ghostops-ci-3-ghost-1   ghostops-app:1.0.0     "docker-entrypoint.s…"   ghost     About a minute ago   Up About a minute (healthy)   127.0.0.1:8080->2368/tcp
+[2026-11-23T00:12:05.813Z] ghostops-ci-3-mysql-1   ghostops-mysql:1.0.0   "docker-entrypoint.s…"   mysql     About a minute ago   Up About a minute (healthy)   3306/tcp, 33060/tcp
+[Pipeline] echo
+[2026-11-23T00:12:05.893Z] Comprobando la comunicacion entre Ghost y MySQL.
+[Pipeline] sh
+[2026-11-23T00:12:06.215Z] + docker compose -f compose.yaml exec -T ghost node -e 
+[2026-11-23T00:12:06.216Z]                     const net = require("net");
+[2026-11-23T00:12:06.216Z] 
+[2026-11-23T00:12:06.216Z]                     const connection = net.createConnection({
+[2026-11-23T00:12:06.216Z]                         host: "mysql",
+[2026-11-23T00:12:06.216Z]                         port: 3306
+[2026-11-23T00:12:06.216Z]                     });
+[2026-11-23T00:12:06.216Z] 
+[2026-11-23T00:12:06.216Z]                     connection.setTimeout(10000);
+[2026-11-23T00:12:06.216Z] 
+[2026-11-23T00:12:06.216Z]                     connection.on("connect", () => {
+[2026-11-23T00:12:06.216Z]                         console.log("OK: Ghost puede conectarse a MySQL mediante el servicio mysql.");
+[2026-11-23T00:12:06.216Z]                         connection.end();
+[2026-11-23T00:12:06.216Z]                     });
+[2026-11-23T00:12:06.216Z] 
+[2026-11-23T00:12:06.216Z]                     connection.on("error", (error) => {
+[2026-11-23T00:12:06.216Z]                         console.error("ERROR de conexion:", error.message);
+[2026-11-23T00:12:06.216Z]                         process.exit(1);
+[2026-11-23T00:12:06.216Z]                     });
+[2026-11-23T00:12:06.216Z] 
+[2026-11-23T00:12:06.216Z]                     connection.on("timeout", () => {
+[2026-11-23T00:12:06.216Z]                         console.error("ERROR: tiempo de espera agotado al conectar con MySQL.");
+[2026-11-23T00:12:06.216Z]                         connection.destroy();
+[2026-11-23T00:12:06.216Z]                         process.exit(1);
+[2026-11-23T00:12:06.216Z]                     });
+[2026-11-23T00:12:06.216Z]                     
+[2026-11-23T00:12:06.768Z] OK: Ghost puede conectarse a MySQL mediante el servicio mysql.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+[2026-11-23T00:12:07.074Z] Limpiando el entorno aislado de pruebas.
+[Pipeline] sh
+[2026-11-23T00:12:07.379Z] + docker compose -f compose.yaml down --volumes --remove-orphans
+[2026-11-23T00:12:07.630Z]  Container ghostops-ci-3-ghost-1 Stopping 
+[2026-11-23T00:12:08.543Z]  Container ghostops-ci-3-ghost-1 Stopped 
+[2026-11-23T00:12:08.543Z]  Container ghostops-ci-3-ghost-1 Removing 
+[2026-11-23T00:12:08.543Z]  Container ghostops-ci-3-ghost-1 Removed 
+[2026-11-23T00:12:08.543Z]  Container ghostops-ci-3-mysql-1 Stopping 
+[2026-11-23T00:12:09.890Z]  Container ghostops-ci-3-mysql-1 Stopped 
+[2026-11-23T00:12:09.890Z]  Container ghostops-ci-3-mysql-1 Removing 
+[2026-11-23T00:12:09.890Z]  Container ghostops-ci-3-mysql-1 Removed 
+[2026-11-23T00:12:09.890Z]  Volume ghostops_ghost_content Removing 
+[2026-11-23T00:12:09.890Z]  Network ghostops-network Removing 
+[2026-11-23T00:12:09.890Z]  Volume ghostops_mysql_data Removing 
+[2026-11-23T00:12:10.141Z]  Volume ghostops_ghost_content Removed 
+[2026-11-23T00:12:10.141Z]  Volume ghostops_mysql_data Removed 
+[2026-11-23T00:12:10.392Z]  Network ghostops-network Removed 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
