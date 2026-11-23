@@ -114,3 +114,7 @@ El workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) se ejecuta en
 - Docker, Inc. (s. f.). *Dockerfile reference*. Docker Documentation. https://docs.docker.com/reference/dockerfile/
 - Ghost Foundation. (s. f.). *Ghost*. https://ghost.org/
 - Oracle. (s. f.). *MySQL 8.0 Reference Manual*. https://dev.mysql.com/doc/refman/8.0/en/
+
+## Integración continua con Jenkins
+
+El proyecto incorpora un pipeline de Jenkins que automatiza la descarga del repositorio, la construcción de las imágenes Docker de Ghost y MySQL y la ejecución de pruebas de comunicación entre los servicios. La integración se mantiene actualizada mediante consultas periódicas al repositorio GitHub utilizando Poll SCM.

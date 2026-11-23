@@ -3,7 +3,10 @@
 services:
 
   mysql:
-    image: mysql:8.0.46
+    image: ghostops-mysql:1.0.0
+    build:
+      context: .
+      dockerfile: docker/mysql/Dockerfile
     restart: unless-stopped
 
     environment:
