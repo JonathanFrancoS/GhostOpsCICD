@@ -11,15 +11,24 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      MYSQL_ROOT_PASSWORD: ci-root-password
       MYSQL_DATABASE: ghost
       MYSQL_USER: ghostuser
-      MYSQL_PASSWORD: ci-ghost-password
       GHOST_URL: http://localhost:8080
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Generate temporary MySQL passwords
+        run: |
+          mysql_root_password="$(openssl rand -hex 32)"
+          mysql_password="$(openssl rand -hex 32)"
+          echo "::add-mask::$mysql_root_password"
+          echo "::add-mask::$mysql_password"
+          {
+            printf 'MYSQL_ROOT_PASSWORD=%s\n' "$mysql_root_password"
+            printf 'MYSQL_PASSWORD=%s\n' "$mysql_password"
+          } >> "$GITHUB_ENV"
 
       - name: Validate Compose configuration
         run: docker compose config --quiet
